@@ -25,10 +25,10 @@ public class UserController {
     }
 
     @PostMapping
-    public int save(@RequestBody User user) {
+    public boolean save(@RequestBody User user) {
 
-        return userService.save(user);
-
+//        return userService.save(user);
+        return userService.saveUser(user);
     }
 
     @DeleteMapping("/{id}")
