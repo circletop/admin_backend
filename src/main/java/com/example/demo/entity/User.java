@@ -1,27 +1,47 @@
 package com.example.demo.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@NoArgsConstructor
-@TableName(value="sys_user")
-@ApiModel(value = "用户信息", description = "用户参数")
-public class User {
-    @TableId
-    @ApiModelProperty(value = "ID")
-    private Integer id;
+/**
+ * <p>
+ * 
+ * </p>
+ *
+ * @author circletop
+ * @since 2023-10-09
+ */
+@Getter
+@Setter
+  @TableName("sys_user")
+@ApiModel(value = "User对象", description = "")
+public class User implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+      @TableId(value = "id", type = IdType.AUTO)
+      private Integer id;
+
     private String username;
-    @JsonIgnore // 忽略password 字段， 不在前端展示
+
     private String password;
+
     private String nickname;
-    private String email;
+
     private String phone;
+
     private String address;
+
+    private String email;
+
+    private LocalDateTime createTime;
+
 
 }

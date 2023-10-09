@@ -1,0 +1,94 @@
+package ${package.Controller};
+
+
+##import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.springframework.web.bind.annotation.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Api;
+import javax.annotation.Resource;
+import java.util.List;
+
+import ${package.Service}.${table.serviceName};
+import $!{package.Entity}.${entity};
+
+
+#if(${restControllerStyle})
+import org.springframework.web.bind.annotation.RestController;
+#else
+import org.springframework.stereotype.Controller;
+#end
+#if(${superControllerClassPackage})
+import ${superControllerClassPackage};
+#end
+
+/**
+ * <p>
+ * $!{table.comment} 前端控制器
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+#if(${restControllerStyle})
+@RestController
+#else
+@Controller
+#end
+@RequestMapping("#if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end")
+@Api(tags="用户中心")
+#if(${kotlin})
+class ${table.controllerName}#if(${superControllerClass}) : ${superControllerClass}()#end
+
+#else
+#if(${superControllerClass})
+public class ${table.controllerName} extends ${superControllerClass} {
+#else
+public class ${table.controllerName} {
+#end
+
+    @Resource
+    private ${table.serviceName} ${table.entityPath}Service;
+
+    @ApiOperation(value = "新增或者修改信息",notes = "这里可以写一些详细信息")
+    @PostMapping
+    public boolean save(@RequestBody ${entity} ${table.entityPath}) {
+        return ${table.entityPath}Service.saveOrUpdate(${table.entityPath});
+    }
+
+    @ApiOperation(value = "根据id删除数据",notes = "这里可以写一些详细信息")
+    @DeleteMapping("/{id}")
+    public boolean delete(@PathVariable Integer id) {
+        return ${table.entityPath}Service.removeById(id);
+    }
+
+    @ApiOperation(value = "根据ids批量删除数据",notes = "这里可以写一些详细信息")
+    @PostMapping("/del/batch")
+    public boolean deleteBatch(@RequestBody List<Integer> ids) {
+        return ${table.entityPath}Service.removeByIds(ids);
+    }
+
+    @ApiOperation(value = "全量数据列表",notes = "这里可以写一些详细信息")
+    @GetMapping
+    public List<${entity}> findAll() {
+        return ${table.entityPath}Service.list();
+    }
+
+    @ApiOperation(value = "根据id查询数据",notes = "这里可以写一些详细信息")
+    @GetMapping("/{id}")
+    public ${entity} findOne(@PathVariable Integer id) {
+        return ${table.entityPath}Service.getById(id);
+    }
+
+    @ApiOperation(value = "分页查询数据",notes = "这里可以写一些详细信息")
+    @GetMapping("/page")
+    public Page<${entity}> findPage(@RequestBody Integer pageNum, @RequestBody Integer pageSize) {
+        QueryWrapper<${entity}> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("id");
+        return ${table.entityPath}Service.page(new Page<>(pageNum, pageSize), queryWrapper);
+    }
+}
+
+#end
