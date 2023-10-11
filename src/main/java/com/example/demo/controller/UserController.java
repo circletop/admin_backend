@@ -2,8 +2,10 @@ package com.example.demo.controller;
 
 
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.demo.controller.dto.UserDTO;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +35,17 @@ public class UserController {
 
     @Autowired
     private IUserService userService;
+
+    @ApiOperation(value = "登陆",notes = "这里可以写一些详细信息")
+    @PostMapping("/login")
+    public boolean login(@RequestBody UserDTO userDTO) {
+        String username = userDTO.getUsername();
+        String password = userDTO.getPassword();
+        if (StrUtil.isBlank(username) || StrUtil.isBlank(password)) {
+            return false;
+        }
+        return userService.login(userDTO);
+    }
 
     @ApiOperation(value = "新增或者修改信息",notes = "这里可以写一些详细信息")
     @PostMapping
