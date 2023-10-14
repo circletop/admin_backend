@@ -26,6 +26,41 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private static final Log LOG = Log.get();
     @Override
     public UserDTO login(UserDTO userDTO) {
+        User one = userInfo(userDTO);
+        if (one !=null) {
+            BeanUtil.copyProperties(one, userDTO, true);
+            return userDTO;
+        } else  {
+            throw new ServiceException(Constants.CODE_509, "用户名或者密码错误");
+        }
+    }
+
+    @Override
+    public User register(UserDTO userDTO) {
+
+        User one = userInfo(userDTO);
+        if(one == null) {
+            one = new User();
+            BeanUtil.copyProperties(userDTO, one,true);
+            save(one);
+        } else {
+            throw new ServiceException(Constants.CODE_509, "用户已存在");
+        }
+
+
+        return one;
+    }
+
+    @Override
+    public User findByUsername(String username) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username", username);
+        User one;
+        one = getOne(queryWrapper);
+        return one;
+    }
+
+    private User userInfo(UserDTO userDTO) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("username", userDTO.getUsername());
         queryWrapper.eq("password", userDTO.getPassword());
@@ -36,12 +71,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             LOG.error(e);
             throw new ServiceException(Constants.CODE_500, e.toString());
         }
+        return one;
 
-        if (one !=null) {
-            BeanUtil.copyProperties(one, userDTO, true);
-            return userDTO;
-        } else  {
-            throw new ServiceException(Constants.CODE_509, "用户名或者密码错误");
-        }
     }
 }

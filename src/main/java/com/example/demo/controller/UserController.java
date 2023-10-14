@@ -50,6 +50,24 @@ public class UserController {
         return Result.success(dto);
     }
 
+    @ApiOperation(value = "注册",notes = "这里可以写一些详细信息")
+    @PostMapping("/register")
+    public Result register(@RequestBody UserDTO userDTO) {
+        String username = userDTO.getUsername();
+        String password = userDTO.getPassword();
+        if (StrUtil.isBlank(username) || StrUtil.isBlank(password)) {
+            return Result.error(Constants.CODE_400, "必填参数错误缺失");
+        }
+        User dto = userService.register(userDTO);
+        return Result.success(dto);
+    }
+
+    @ApiOperation(value = "根据username查询用户信息",notes = "这里可以写一些详细信息")
+    @GetMapping("/username/{username}")
+    public Result findByUsername(@PathVariable String username) {
+        return Result.success(userService.findByUsername(username));
+    }
+
     @ApiOperation(value = "新增或者修改信息",notes = "这里可以写一些详细信息")
     @PostMapping
     public boolean save(@RequestBody User user) {
