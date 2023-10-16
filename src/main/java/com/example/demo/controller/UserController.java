@@ -70,14 +70,24 @@ public class UserController {
 
     @ApiOperation(value = "新增或者修改信息",notes = "这里可以写一些详细信息")
     @PostMapping
-    public boolean save(@RequestBody User user) {
-        return userService.saveOrUpdate(user);
+    public Result save(@RequestBody User user) {
+        try{
+            userService.saveOrUpdate(user);
+            return Result.success();
+        } catch(SecurityException e) {
+            return Result.error(Constants.CODE_500, "系统错误");
+        }
     }
 
     @ApiOperation(value = "根据id删除数据",notes = "这里可以写一些详细信息")
     @DeleteMapping("/{id}")
-    public boolean delete(@PathVariable Integer id) {
-        return userService.removeById(id);
+    public Result delete(@PathVariable Integer id) {
+        try{
+            userService.removeById(id);
+            return Result.success();
+        } catch ( SecurityException e) {
+            return Result.error(Constants.CODE_500, "系统错误");
+        }
     }
 
     @ApiOperation(value = "根据ids批量删除数据",notes = "这里可以写一些详细信息")
