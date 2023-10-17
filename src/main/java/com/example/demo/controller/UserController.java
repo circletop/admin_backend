@@ -110,7 +110,7 @@ public class UserController {
 
     @ApiOperation(value = "分页查询数据",notes = "这里可以写一些详细信息")
     @GetMapping("/page")
-    public Page<User> findPage(@RequestParam Integer pageNum, @RequestParam Integer pageSize,
+    public Result findPage(@RequestParam Integer pageNum, @RequestParam Integer pageSize,
                                @ApiParam(value = "用户名", required = false) @RequestParam(required = false, defaultValue = "") String username) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         // 参数非空
@@ -118,7 +118,7 @@ public class UserController {
             queryWrapper.like("username", username);
         }
         queryWrapper.orderByDesc("id");
-        return userService.page(new Page<>(pageNum, pageSize), queryWrapper);
+        return Result.success(userService.page(new Page<>(pageNum, pageSize), queryWrapper));
     }
 }
 
