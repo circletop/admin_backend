@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.demo.common.Constants;
 import com.example.demo.common.Result;
 import com.example.demo.controller.dto.UserDTO;
+import com.example.demo.utils.TokenUtils;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -118,6 +119,8 @@ public class UserController {
             queryWrapper.like("username", username);
         }
         queryWrapper.orderByDesc("id");
+//        User currentUser = TokenUtils.getCurrentUser();
+//        System.out.println(currentUser.getUsername());
         return Result.success(userService.page(new Page<>(pageNum, pageSize), queryWrapper));
     }
 }
