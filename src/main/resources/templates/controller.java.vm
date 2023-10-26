@@ -84,7 +84,7 @@ public class ${table.controllerName} {
 
     @ApiOperation(value = "分页查询数据",notes = "这里可以写一些详细信息")
     @GetMapping("/page")
-    public Page<${entity}> findPage(@RequestBody Integer pageNum, @RequestBody Integer pageSize) {
+    public Page<${entity}> findPage(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         QueryWrapper<${entity}> queryWrapper = new QueryWrapper<>();
         queryWrapper.orderByDesc("id");
         return ${table.entityPath}Service.page(new Page<>(pageNum, pageSize), queryWrapper);
