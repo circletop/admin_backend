@@ -10,10 +10,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Api;
 import javax.annotation.Resource;
 import java.util.List;
+import ${package.Parent}.common.Result;
+import ${package.Parent}.common.Constants;
+
 
 import ${package.Service}.${table.serviceName};
 import $!{package.Entity}.${entity};
-
 
 #if(${restControllerStyle})
 import org.springframework.web.bind.annotation.RestController;
@@ -32,13 +34,14 @@ import ${superControllerClassPackage};
  * @author ${author}
  * @since ${date}
  */
+
 #if(${restControllerStyle})
 @RestController
 #else
 @Controller
 #end
 @RequestMapping("#if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end")
-@Api(tags="用户中心")
+@Api(tags="角色中心")
 #if(${kotlin})
 class ${table.controllerName}#if(${superControllerClass}) : ${superControllerClass}()#end
 
@@ -54,14 +57,24 @@ public class ${table.controllerName} {
 
     @ApiOperation(value = "新增或者修改信息",notes = "这里可以写一些详细信息")
     @PostMapping
-    public boolean save(@RequestBody ${entity} ${table.entityPath}) {
-        return ${table.entityPath}Service.saveOrUpdate(${table.entityPath});
+    public Result save(@RequestBody ${entity} ${table.entityPath}) {
+        try{
+        ${table.entityPath}Service.saveOrUpdate(${table.entityPath});
+        return Result.success();
+        } catch(SecurityException e) {
+        return Result.error(Constants.CODE_500, "系统错误");
+        }
     }
 
     @ApiOperation(value = "根据id删除数据",notes = "这里可以写一些详细信息")
     @DeleteMapping("/{id}")
-    public boolean delete(@PathVariable Integer id) {
-        return ${table.entityPath}Service.removeById(id);
+    public Result delete(@PathVariable Integer id) {
+        try{
+            ${table.entityPath}Service.removeById(id);
+            return Result.success();
+        } catch ( SecurityException e) {
+            return Result.error(Constants.CODE_500, "系统错误");
+        }
     }
 
     @ApiOperation(value = "根据ids批量删除数据",notes = "这里可以写一些详细信息")
@@ -84,10 +97,11 @@ public class ${table.controllerName} {
 
     @ApiOperation(value = "分页查询数据",notes = "这里可以写一些详细信息")
     @GetMapping("/page")
-    public Page<${entity}> findPage(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+    public Result findPage(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         QueryWrapper<${entity}> queryWrapper = new QueryWrapper<>();
         queryWrapper.orderByDesc("id");
-        return ${table.entityPath}Service.page(new Page<>(pageNum, pageSize), queryWrapper);
+##        return ${table.entityPath}Service.page(new Page<>(pageNum, pageSize), queryWrapper);
+        return Result.success(${table.entityPath}Service.page(new Page<>(pageNum, pageSize), queryWrapper));
     }
 }
 
