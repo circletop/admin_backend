@@ -77,8 +77,13 @@ public class RoleController {
 
     @ApiOperation(value = "分页查询数据",notes = "这里可以写一些详细信息")
     @GetMapping("/page")
-    public Result findPage(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+    public Result findPage(@RequestParam Integer pageNum, @RequestParam Integer pageSize, @RequestParam(required = false, defaultValue = "") String name) {
         QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
+
+        // 参数非空
+        if(name != null && !name.isEmpty()) {
+            queryWrapper.like("name", name);
+        }
         queryWrapper.orderByDesc("id");
         return Result.success(roleService.page(new Page<>(pageNum, pageSize), queryWrapper));
     }
