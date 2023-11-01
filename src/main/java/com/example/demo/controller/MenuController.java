@@ -2,12 +2,14 @@ package com.example.demo.controller;
 
 
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Api;
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import com.example.demo.common.Result;
 import com.example.demo.common.Constants;
@@ -39,10 +41,13 @@ public class MenuController {
     @PostMapping
     public Result save(@RequestBody Menu menu) {
         try{
-        menuService.saveOrUpdate(menu);
-        return Result.success();
+            if(menu.getPId() == null) {
+                menu.setPId(null);
+            }
+            menuService.saveOrUpdate(menu);
+            return Result.success();
         } catch(SecurityException e) {
-        return Result.error(Constants.CODE_500, "系统错误");
+            return Result.error(Constants.CODE_500, "系统错误");
         }
     }
 
@@ -83,8 +88,37 @@ public class MenuController {
         if(menuName != null && !menuName.isEmpty()) {
             queryWrapper.like("menu_name", menuName);
         }
+        // 查询1级菜单
+        queryWrapper.isNull("pid");
         queryWrapper.orderByDesc("id");
-        return Result.success(menuService.page(new Page<>(pageNum, pageSize), queryWrapper));
+        Page<Menu> page = menuService.page(new Page<>(pageNum, pageSize), queryWrapper);
+        if(page.getRecords() == null) {
+            return Result.success(new ArrayList<>());
+        }
+        queryWrapper = new QueryWrapper<>();
+        // 查询2级菜单
+        queryWrapper.isNotNull("pid");
+        List<Menu> list = menuService.list(queryWrapper);
+        for(Menu parent: page.getRecords()) {
+            setChildren(parent, list);
+        }
+        return Result.success(page);
+
+
+    }
+
+    // 循环递归生成子菜单
+    public void setChildren(Menu parent, List<Menu> childList) {
+        for(Menu child: childList) {
+           if(parent.getId().equals(child.getPId())) {
+               if(parent.getChildren() == null) {
+                   parent.setChildren(new ArrayList<>());
+               }
+               parent.getChildren().add(child);
+               setChildren(child, childList);
+           }
+        }
+
     }
 }
 
