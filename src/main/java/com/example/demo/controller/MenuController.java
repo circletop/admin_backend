@@ -88,6 +88,7 @@ public class MenuController {
         if(menuName != null && !menuName.isEmpty()) {
             queryWrapper.like("menu_name", menuName);
         }
+        // todo 按条件模糊查询
         // 查询1级菜单
         queryWrapper.isNull("pid");
         queryWrapper.orderByDesc("id");
