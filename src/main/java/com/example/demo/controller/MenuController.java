@@ -11,6 +11,8 @@ import io.swagger.annotations.Api;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import com.example.demo.common.Result;
 import com.example.demo.common.Constants;
 
@@ -70,8 +72,12 @@ public class MenuController {
 
     @ApiOperation(value = "全量数据列表",notes = "这里可以写一些详细信息")
     @GetMapping
-    public List<Menu> findAll() {
-        return menuService.list();
+    public Result findAll() {
+        List<Menu> list = menuService.list();
+        // 找出数据中的一级菜单
+        List<Menu> parentNodes = list.stream().filter(menu -> menu.getPId() == null).collect(Collectors.toList());
+        setAllChildren(parentNodes, list);
+        return Result.success(parentNodes);
     }
 
     @ApiOperation(value = "根据id查询数据",notes = "这里可以写一些详细信息")
@@ -119,7 +125,16 @@ public class MenuController {
                setChildren(child, childList);
            }
         }
+    }
 
+
+    // 全量数据递归
+    public void setAllChildren(List<Menu> parentNodes, List<Menu> list ) {
+        for (Menu parentNode : parentNodes) {
+            List<Menu> childList = list.stream().filter(m -> parentNode.getId().equals(m.getPId())).collect(Collectors.toList());
+            parentNode.setChildren(childList);
+            setAllChildren(childList, list);
+        }
     }
 }
 
