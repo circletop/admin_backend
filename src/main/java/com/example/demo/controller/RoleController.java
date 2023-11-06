@@ -87,5 +87,30 @@ public class RoleController {
         queryWrapper.orderByDesc("id");
         return Result.success(roleService.page(new Page<>(pageNum, pageSize), queryWrapper));
     }
+
+    /**
+     * 根据角色id 分配菜单
+     * @param roleId 角色id
+     * @param menuIds 菜单id
+     * @return
+     */
+    @ApiOperation(value = "根据id更新当前角色的菜单权限 ",notes = "这里可以写一些详细信息")
+    @PostMapping("/roleMenu/{roleId}")
+    public Result roleMenu(@PathVariable("roleId") Integer roleId, @RequestBody List<Integer> menuIds) {
+        roleService.setRoleMenu(roleId, menuIds);
+        return Result.success();
+    }
+
+    /**
+     * 根据角色id 分配菜单
+     * @param roleId 角色id
+     * @return
+     */
+    @ApiOperation(value = "根据id更新当前角色的菜单权限 ",notes = "这里可以写一些详细信息")
+    @GetMapping("/roleMenu/{roleId}")
+    public Result getRoleMenu(@PathVariable("roleId") Integer roleId) {
+        return Result.success(roleService.getRoleMenu(roleId));
+    }
+
 }
 
