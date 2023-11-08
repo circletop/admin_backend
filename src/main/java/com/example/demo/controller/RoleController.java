@@ -156,16 +156,16 @@ public class RoleController {
     public List<Menu> filterMenu(List<Integer> menuIds, List<Menu> allMenus) {
         List<Menu> roleMenus = new ArrayList<>();
         for (Menu menu : allMenus) {
-            if(menuIds.contains(menu.getId())) {
+            List<Menu> children = menu.getChildren();
+            if(menuIds.contains(menu.getId()) || !children.isEmpty()) {
                 roleMenus.add(menu);
             }
-            List<Menu> children = menu.getChildren();
             // 移除不在menuids里面的菜单数据
             children.removeIf(child -> !menuIds.contains(child.getId()));
-            // 如果半选集合则需要判断是否有子集
-            if(!children.isEmpty() && roleMenus.stream().noneMatch(p-> Objects.equals(p.getId(), menu.getId()))) {
-                roleMenus.add(menu);
-            }
+//            // 如果半选集合则需要判断是否有子集
+//            if(!children.isEmpty() && roleMenus.stream().noneMatch(p-> Objects.equals(p.getId(), menu.getId()))) {
+//                roleMenus.add(menu);
+//            }
         }
 
         return roleMenus;
