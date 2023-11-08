@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.demo.entity.Role;
 import com.example.demo.entity.RoleMenu;
@@ -27,6 +28,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 
     @Resource
     private RoleMenuMapper roleMenuMapper;
+
+    @Resource
+    private RoleMapper roleMapper;
     @Override
     public void setRoleMenu(Integer roleId, List<Integer> menuIds) {
 
@@ -51,5 +55,11 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     public List<Integer> getRoleMenu(Integer roleId) {
 
         return roleMenuMapper.getByRoleId(roleId);
+    }
+
+    @Override
+    public Role getByRoleKey(String roleKey) {
+
+        return roleMapper.selectOne(new LambdaQueryWrapper<Role>().eq(Role::getRoleKey, roleKey));
     }
 }

@@ -41,7 +41,7 @@ public class User implements Serializable {
 
     private String email;
 
+    private String role;
+
     private LocalDateTime createTime;
-
-
 }

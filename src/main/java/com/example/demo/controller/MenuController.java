@@ -72,11 +72,8 @@ public class MenuController {
 
     @ApiOperation(value = "全量数据列表",notes = "这里可以写一些详细信息")
     @GetMapping
-    public Result findAll() {
-        List<Menu> list = menuService.list();
-        // 找出数据中的一级菜单
-        List<Menu> parentNodes = list.stream().filter(menu -> menu.getPId() == null).collect(Collectors.toList());
-        setAllChildren(parentNodes, list);
+    public Result findAll() {;
+        List<Menu> parentNodes = menuService.findAllMenus();
         return Result.success(parentNodes);
     }
 
@@ -124,16 +121,6 @@ public class MenuController {
                parent.getChildren().add(child);
                setChildren(child, childList);
            }
-        }
-    }
-
-
-    // 全量数据递归
-    public void setAllChildren(List<Menu> parentNodes, List<Menu> list ) {
-        for (Menu parentNode : parentNodes) {
-            List<Menu> childList = list.stream().filter(m -> parentNode.getId().equals(m.getPId())).collect(Collectors.toList());
-            parentNode.setChildren(childList);
-            setAllChildren(childList, list);
         }
     }
 }
